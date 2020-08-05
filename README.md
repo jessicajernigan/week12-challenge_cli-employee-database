@@ -63,3 +63,10 @@ roles (id, role_name)
 salaries (id, salary_amt) ==> look into currency formats
 departments (id, department_name)
 
+
+### High Level Project Plan:
+- Set up project file/folder structure
+- Create DB and tables
+- Populte data
+- Save queries in schema and seed files (don't forget drop statements)
+- Write queries for table joins
