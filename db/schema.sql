@@ -22,6 +22,7 @@ CREATE TABLE managers (
   id INTEGER PRIMARY KEY,
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
+  role_id INTEGER UNSIGNED NOT NULL,
   department_id INTEGER UNSIGNED NOT NULL
 );
 

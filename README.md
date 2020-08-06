@@ -30,7 +30,7 @@ THEN I am presented with a formatted table showing employee data, including:
 • departments
 • salaries
 • managers that the employees report to 
-==> JOIN employees to managers to salaries to departments
+==> JOIN employees to managers to roles to departments
 
 WHEN I choose to view all departments
 THEN I am presented with a formatted table showing department names and department ids
