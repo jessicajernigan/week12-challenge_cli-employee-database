@@ -20,8 +20,6 @@ WHEN I choose to view all roles
 THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 
 
-
-
 ## console.table()
 WHEN I choose to view all employees
 THEN I am presented with a formatted table showing employee data, including:
@@ -39,6 +37,7 @@ THEN I am presented with a formatted table showing department names and departme
 
 ## INSERT INTO departments
 WHEN I choose to add a department
+
 THEN I am prompted to enter the name of the department and that department is added to the database
 
 ## INSERT INTO role
@@ -60,13 +59,12 @@ THEN I am prompted to select an employee to update and their new role and this i
 ### TABLES
 employees (id, first_name, last_name, role_id, manager_id, salary_id)
 roles (id, role_name) 
-salaries (id, salary_amt) ==> look into currency formats
 departments (id, department_name)
 
 
 ### High Level Project Plan:
 - Set up project file/folder structure
 - Create DB and tables
-- Populte data
+- Populate data
 - Save queries in schema and seed files (don't forget drop statements)
 - Write queries for table joins
