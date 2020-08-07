@@ -14,7 +14,7 @@ CREATE TABLE roles (
 
 CREATE TABLE departments (
   id INTEGER PRIMARY KEY,
-  dept_name TEXT
+  dept_name VARCHAR(80) NOT NULL
 );
 
 
