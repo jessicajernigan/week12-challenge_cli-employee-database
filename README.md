@@ -19,6 +19,14 @@ THEN I am presented with the following options:
 WHEN I choose to view all roles 
 THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 
+<!-- SELECT 
+    r.id 'Role ID', r.role_name 'Role', d.dept_name 'Department'
+FROM
+    roles r
+        JOIN
+    departments d ON r.department_id = d.id
+ORDER BY r.id ASC; -->
+
 
 ## console.table()
 WHEN I choose to view all employees
@@ -31,6 +39,13 @@ THEN I am presented with a formatted table showing employee data, including:
 • salaries
 • managers that the employees report to 
 ==> JOIN employees to managers to roles to departments
+
+SELECT 
+e.id,
+
+
+
+
 
 WHEN I choose to view all departments
 THEN I am presented with a formatted table showing department names and department ids
