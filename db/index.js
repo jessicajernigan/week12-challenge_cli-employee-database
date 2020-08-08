@@ -1,4 +1,6 @@
-const { connection } = require("./connection");
+
+const { genericFollowUpPrompt } = require("../index")
+
 
 
 const viewRoles = () => {
@@ -24,18 +26,18 @@ const viewRoles = () => {
     if (err) throw err;
     // Log all results of the SELECT statement
     console.table(res);
-  });
+  }).then(() => genericFollowUpPrompt())
 };
 
 
 
 const viewEmployees = () => {
   console.log(`
-   • = • = • = • = • = • = • = • = • = • = • = • = • 
-  |                                                 |
-  |      V I E W   A L L   E M P L O Y E E S        |  
-  |                                                 |
-   • = • = • = • = • = • = • = • = • = • = • = • = •  
+   • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • =
+  |                                                               |
+  |      N O W   S H O W I N G   A L L   E M P L O Y E E S        |  
+  |                                                               |
+   • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • =  
   `);
 
   connection.query(`
@@ -66,11 +68,11 @@ const viewEmployees = () => {
 
 const viewDepts = () => {
   console.log(`
-   • = • = • = • = • = • = • = • = • = • = • = • = • = •  
-  |                                                     |
-  |      V I E W   A L L   D E P A R T M E N T S        |  
-  |                                                     |
-   • = • = • = • = • = • = • = • = • = • = • = • = • = • 
+   • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • =  
+  |                                                                   |
+  |      N O W   S H O W I N G   A L L   D E P A R T M E N T S        |  
+  |                                                                   |
+   • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = 
   `);
 
   connection.query('SELECT * FROM departments ORDER BY id ASC;', // Used quotes instead of backticks here due to simplicity of the query.
@@ -81,6 +83,37 @@ const viewDepts = () => {
     console.table(res);
   });
 };
+
+const addNewDept = (newDept) => {
+  console.log(
+    `
+   • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = •  
+  |                                                                            |
+  |      A   N E W   D E P A R T M E N T   H A S   B E E N   A D D E D         |  
+  |                                                                            |
+   • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = •
+  `
+  );
+  const query = connection.query(
+    'INSERT INTO products SET ?',
+    {
+      flavor: 'Rocky Road',
+      price: 3.0,
+      quantity: 50,
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + ' product inserted!\n');
+      // Call updateProduct() AFTER the INSERT completes
+      updateProduct();
+    }
+  );
+  // logs the actual query being run
+  console.log(query.sql);
+};
+
+
+
 
 
 
