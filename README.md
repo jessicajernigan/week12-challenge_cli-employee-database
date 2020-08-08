@@ -19,13 +19,13 @@ THEN I am presented with the following options:
 WHEN I choose to view all roles 
 THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 
-<!-- SELECT 
+SELECT 
     r.id 'Role ID', r.role_name 'Role', d.dept_name 'Department'
 FROM
     roles r
         JOIN
     departments d ON r.department_id = d.id
-ORDER BY r.id ASC; -->
+ORDER BY r.id ASC;
 
 
 ## console.table()
@@ -40,7 +40,7 @@ THEN I am presented with a formatted table showing employee data, including:
 • managers that the employees report to 
 
 
-<!-- SELECT 
+SELECT 
 e.id 'EID',
 e.first_name 'Employee First Name',
 e.last_name 'Employee Last Name',
@@ -56,7 +56,7 @@ ON r.id = e.role_id
 JOIN departments d
 ON d.id = e.department_id
 JOIN managers m
-ON m.id = e.manager_id; -->
+ON m.id = e.manager_id;
 
 
 

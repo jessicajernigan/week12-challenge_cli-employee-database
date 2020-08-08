@@ -1,3 +1,6 @@
+-- DROP DATABASE IF EXISTS employeeDB;
+-- CREATE DATABASE employeeDB;
+-- USE employeeDB;
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS managers;
 DROP TABLE IF EXISTS departments;

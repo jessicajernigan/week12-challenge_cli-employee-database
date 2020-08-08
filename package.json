@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "sqlite3 db/employee.db < db/schema.sql",
-    "seed": "sqlite3 db/employee.db < db/seeds.sql",
-    "db": "sqlite3 db/employee.db"
+    "migrate": "sqlite3 db/employeeDB.db < db/schema.sql",
+    "seed": "sqlite3 db/employeeDB.db < db/seeds.sql",
+    "db": "sqlite3 db/employeeDB.db"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/jessicajernigan/week12-challenge_cli-employee-database#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "inquirer": "^7.3.3"
+    "inquirer": "^7.3.3",
+    "mysql2": "^2.1.0"
   }
 }
