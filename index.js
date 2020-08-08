@@ -1,6 +1,7 @@
 const inquirer = require('inquirer'); // Call 'inquirer' package
 const cTable = require('console.table'); // Call 'console.table' package
 const { connection } = require("./db/connection");
+const rolesArray = []
 // var deasync = require('deasync');
 // const { viewRoles, viewEmployees, viewDepts } = require('./db/index.js');
 
@@ -14,6 +15,7 @@ const employeeDbPrompt = () => {
   |                                                                         |
    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • 
   `);
+  retrieveAllRoles();
 
   return inquirer.prompt([
     {
@@ -40,7 +42,7 @@ const employeeDbPrompt = () => {
         break;
       case "Add a Department": addDeptFollowUpPrompt();
         break;
-      case "Add an Employee": addEmployee();
+      case "Add an Employee": addEmpFollowUpPrompt();
         break;
       case "Update an Employee\'s Role": updateRole();
         break;
@@ -210,21 +212,24 @@ const addNewDept = (newDeptString) => {
     },
     function (err, res) {
       if (err) throw err;
-      // console.log(res.affectedRows + ' department added!\n');
-      // Call updateProduct() AFTER the INSERT completes
       genericFollowUpPrompt();
     }
   );
-  // logs the actual query being run
-  // console.log(query.sql);
 };
 
 
 
+const retrieveAllRoles = () => {
+    connection.query('SELECT role_name FROM roles',
+      function (err, res) {
+        if (err) throw err;
+        rolesArray.push(res);
+      });
+
+};
 
 
-
-const addEmpFollowUpPrompt = () => {
+const addEmpFollowUpPrompt = (roles) => {
   return inquirer.prompt([
     {
       type: 'input',
@@ -241,13 +246,27 @@ const addEmpFollowUpPrompt = () => {
       name: 'role',
       message: 'What is the employee\'s role?',
       choices: [
-        "View All Departments",
-        "View All Roles",
-        "View All Employees",
-        "Add a Department",
-        "Add an Employee",
-        "Update an Employee\'s Role",
-        "Never mind; please exit the program."
+        'Inbound Salesperson',
+        'VP of Sales',
+        'Outbound Salesperson', 
+        'Account Manager', 
+        'Front End Developer',
+        'Back End Developer', 
+        'Engineering Manager', 
+        'VP of Product', 
+        'Visual Designer', 
+        'UX Designer', 
+        'Affiliate Manager', 
+        'Controller', 
+        'Accountant', 
+        'Content Strategist',
+        'SEO Manager', 
+        'SEO Generalist', 
+        'VP of Marketing', 
+        'Marketing Analyst', 
+        'Recruiter', 
+        'HR Manager', 
+        'Office Administrator'
       ]
     },
     {
@@ -265,16 +284,16 @@ const addEmpFollowUpPrompt = () => {
       ]
     }
   ])
-    .then((answers) => {
-      const { newDept } = answers
-      let newDeptString = JSON.stringify(newDept).replace(/^"(.*)"$/, '$1'); // Regex to remove quotes from beginning and end of a string.
-      addNewDept(newDeptString);
+    .then((newEmp) => {
+      const { firstName, lastName, role, manager } = newEmp
+      // const newEmp = Object.create( firstName, lastName, role, manager )
+      console.log('Here is the new employee: ', newEmp)
     })
-  // .then(genericFollowUpPrompt);
+    .then(addNewEmployee(newEmp));
 };
 
 // 2. A second function to insert that value and return a successful response to the user.
-const addNewDept = (newDeptString) => {
+const addNewEmployee = (newEmp) => {
   console.log(
     `
    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = •  
@@ -285,19 +304,15 @@ const addNewDept = (newDeptString) => {
   `
   );
   const query = connection.query(
-    'INSERT INTO departments SET ?',
+    'INSERT INTO employees SET ? AND SET ? AND SET ?',
     {
       dept_name: newDeptString
     },
     function (err, res) {
       if (err) throw err;
-      // console.log(res.affectedRows + ' department added!\n');
-      // Call updateProduct() AFTER the INSERT completes
       genericFollowUpPrompt();
     }
   );
-  // logs the actual query being run
-  // console.log(query.sql);
 };
 
 employeeDbPrompt();
