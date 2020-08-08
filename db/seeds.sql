@@ -48,7 +48,7 @@ VALUES
   ('Marion', 'Sylder', 15, 4),
   ('Anton', 'Chigurh', 17, 5),
   ('Lester', 'Ballard', 12, 6),
-  ('John Grady', 'Cole', 20, 7);
+  ('Billy', 'Parham', 20, 7);
 
 
 INSERT INTO employees
