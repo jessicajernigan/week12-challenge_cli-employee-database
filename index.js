@@ -1,4 +1,5 @@
 const inquirer = require('inquirer'); // Call 'inquirer' package
+const { viewRoles, viewEmployees, viewDepts } = require('./db/index.js'); 
 
 
 const employeeDbPrompt = () => {
@@ -24,10 +25,17 @@ const employeeDbPrompt = () => {
         'Update an Employee\'s Role'
       ]
     }
-  ]).then((selection) => {
-    console.log(selection);
-  }
-  )
+  ]).then(answers => {
+    switch (answers.selectType) {
+      case "View All Departments": viewDepts();
+        break;
+      case "View All Roles": viewRoles();
+        break;
+      case "View All Employees": viewEmployees();
+        break;
+      default: console.log('Done!');
+    }
+  });
 };
 
 employeeDbPrompt();

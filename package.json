@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "sqlite3 db/employeeDB.db < db/schema.sql",
-    "seed": "sqlite3 db/employeeDB.db < db/seeds.sql",
+    "migrate": "source db/schema.sql",
+    "seed": "source db/seeds.sql",
     "db": "sqlite3 db/employeeDB.db"
   },
   "repository": {

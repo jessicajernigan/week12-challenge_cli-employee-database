@@ -1,3 +1,5 @@
+USE employeeDB;
+
 INSERT INTO roles
   (role_name, salary, department_id)
 VALUES

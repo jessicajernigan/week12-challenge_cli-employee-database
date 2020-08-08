@@ -1,40 +1,48 @@
--- DROP DATABASE IF EXISTS employeeDB;
--- CREATE DATABASE employeeDB;
--- USE employeeDB;
+DROP DATABASE IF EXISTS employeeDB;
+CREATE DATABASE employeeDB;
+USE employeeDB;
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS managers;
 DROP TABLE IF EXISTS departments;
 DROP TABLE IF EXISTS roles;
 
 
-CREATE TABLE roles (
-  id INTEGER PRIMARY KEY,
+CREATE TABLE roles 
+(
+  id INTEGER AUTO_INCREMENT,
   role_name VARCHAR(80) NOT NULL,
   salary DECIMAL(12,2),
-  department_id INTEGER UNSIGNED NOT NULL
+  department_id INTEGER UNSIGNED NOT NULL,
+  PRIMARY KEY(id)
 );
 
 
-CREATE TABLE departments (
-  id INTEGER PRIMARY KEY,
-  dept_name VARCHAR(80) NOT NULL
+CREATE TABLE departments 
+(
+  id INTEGER AUTO_INCREMENT,
+  dept_name VARCHAR(80) NOT NULL,
+  PRIMARY KEY(id)
 );
 
 
-CREATE TABLE managers (
-  id INTEGER PRIMARY KEY,
+CREATE TABLE managers 
+(
+  id INTEGER AUTO_INCREMENT,
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   role_id INTEGER UNSIGNED NOT NULL,
-  department_id INTEGER UNSIGNED NOT NULL
+  department_id INTEGER UNSIGNED NOT NULL,
+  PRIMARY KEY(id)
 );
 
 
-CREATE TABLE employees (
-  id INTEGER PRIMARY KEY,
+CREATE TABLE employees 
+(
+  id INTEGER AUTO_INCREMENT,
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   role_id INTEGER UNSIGNED NOT NULL,
   department_id INTEGER NOT NULL,
-  manager_id INTEGER UNSIGNED
+  manager_id INTEGER UNSIGNED,
+  PRIMARY KEY(id)
 );

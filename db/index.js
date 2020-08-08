@@ -1,20 +1,4 @@
-const mysql = require('mysql2');
-
-
-const connection = mysql.createConnection({
-  host: 'localhost',
-  port: 3306,
-  // Your MySQL username
-  user: 'root',
-  // Your MySQL password
-  password: 'Welcome2018',
-  database: 'employeeDB',
-});
-
-connection.connect((err) => {
-  if (err) throw err;
-  console.log('connected as id ' + connection.threadId + '\n');
-});
+const { connection } = require("./connection");
 
 
 const viewRoles = () => {
@@ -42,6 +26,8 @@ const viewRoles = () => {
     console.table(res);
   });
 };
+
+
 
 const viewEmployees = () => {
   console.log(`
@@ -99,4 +85,4 @@ const viewDepts = () => {
 
 
 
-// module.exports = { viewRoles: viewRoles, viewEmployees: viewEmployees, viewDepts: viewDepts };
+module.exports = { viewRoles, viewEmployees, viewDepts };
