@@ -15,7 +15,7 @@ const employeeDbPrompt = () => {
   |                                                                         |
    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • 
   `);
-  retrieveAllRoles();
+  // retrieveAllRoles();
 
   return inquirer.prompt([
     {
@@ -113,11 +113,9 @@ const viewRoles = () => {
 
     function (err, res) {
       if (err) throw err;
-      // Log all results of the SELECT statement
       console.table(res);
-      // return(res);
+      genericFollowUpPrompt();
     })
-  genericFollowUpPrompt();
 };
 
 
@@ -153,8 +151,8 @@ const viewEmployees = () => {
       if (err) throw err;
       // Log all results of the SELECT statement
       console.table(res);
+      genericFollowUpPrompt();
     });
-  genericFollowUpPrompt();
 };
 
 const viewDepts = () => {
@@ -171,8 +169,8 @@ const viewDepts = () => {
       if (err) throw err;
       // Log all results of the SELECT statement
       console.table(res);
+      genericFollowUpPrompt();
     });
-  genericFollowUpPrompt();
 };
 
 
@@ -219,53 +217,53 @@ const addNewDept = (newDeptString) => {
 
 
 
-const retrieveAllRoles = () => {
-    connection.query('SELECT role_name FROM roles',
-      function (err, res) {
-        if (err) throw err;
-        rolesArray.push(res);
-      });
+// const retrieveAllRoles = () => {
+//     connection.query('SELECT role_name FROM roles',
+//       function (err, res) {
+//         if (err) throw err;
+//         rolesArray.push(res);
+//       });
 
-};
+// };
 
 
 const addEmpFollowUpPrompt = (roles) => {
   return inquirer.prompt([
     {
       type: 'input',
-      name: 'firstName',
+      name: 'first_name',
       message: 'What is the employee\'s first name?'
     },
     {
       type: 'input',
-      name: 'lastName',
+      name: 'last_name',
       message: 'What is the employee\'s last name?'
     },
     {
       type: 'list',
-      name: 'role',
+      name: 'role_name',
       message: 'What is the employee\'s role?',
       choices: [
         'Inbound Salesperson',
         'VP of Sales',
-        'Outbound Salesperson', 
-        'Account Manager', 
+        'Outbound Salesperson',
+        'Account Manager',
         'Front End Developer',
-        'Back End Developer', 
-        'Engineering Manager', 
-        'VP of Product', 
-        'Visual Designer', 
-        'UX Designer', 
-        'Affiliate Manager', 
-        'Controller', 
-        'Accountant', 
+        'Back End Developer',
+        'Engineering Manager',
+        'VP of Product',
+        'Visual Designer',
+        'UX Designer',
+        'Affiliate Manager',
+        'Controller',
+        'Accountant',
         'Content Strategist',
-        'SEO Manager', 
-        'SEO Generalist', 
-        'VP of Marketing', 
-        'Marketing Analyst', 
-        'Recruiter', 
-        'HR Manager', 
+        'SEO Manager',
+        'SEO Generalist',
+        'VP of Marketing',
+        'Marketing Analyst',
+        'Recruiter',
+        'HR Manager',
         'Office Administrator'
       ]
     },
@@ -285,14 +283,59 @@ const addEmpFollowUpPrompt = (roles) => {
     }
   ])
     .then((newEmp) => {
-      const { firstName, lastName, role, manager } = newEmp
+      const { firstName, lastName, role_name, manager } = newEmp
       // const newEmp = Object.create( firstName, lastName, role, manager )
-      console.log('Here is the new employee: ', newEmp)
-    })
-    .then(addNewEmployee(newEmp));
+      console.log('Here is the new employee: ', newEmp);
+      console.log('Here is newEmp.role_name: ', newEmp.role_name);
+      let roleName = role_name;
+      let mgrName = manager;
+      console.log('roleName: ', roleName)
+      return Promise.all([getRoleId(roleName), getMgrId(mgrName), newEmp])
+    }).then((values) => {
+      console.log(values)
+      // addNewEmployee(newEmp) 
+    });
 };
 
-// 2. A second function to insert that value and return a successful response to the user.
+
+// 2. A function to retrieve the role_id and department_id
+const getRoleId = (roleName) => {
+  return new Promise((resolve, reject) => {
+    connection.query('SELECT id, department_id FROM roles WHERE ?',
+      {
+        role_name: roleName,
+      },
+      function (err, res) {
+        if (err) reject(err);
+        console.log('Should show an id: ', res);
+        resolve(res);
+      })
+  })
+}
+
+// 3. A function to retrieve the manager_id
+const getMgrId = (mgrName) => {
+  return new Promise((resolve, reject) => {
+    const [first_name, last_name] = mgrName.split(' ');
+    const query = connection.query('SELECT id FROM managers WHERE ?',
+      [
+        {
+          first_name: first_name,
+        },
+        {
+          last_name: last_name
+        }],
+      function (err, res) {
+        if (err) reject(err);
+        console.log('Should show an id: ', res);
+        resolve(res);
+      })
+    console.log(query.sql);
+  })
+}
+
+
+// 4. A function to insert that value and return messaging to the user.
 const addNewEmployee = (newEmp) => {
   console.log(
     `
@@ -305,9 +348,14 @@ const addNewEmployee = (newEmp) => {
   );
   const query = connection.query(
     'INSERT INTO employees SET ? AND SET ? AND SET ?',
-    {
-      dept_name: newDeptString
-    },
+    // {
+    //   first_name: ,
+    //   last_name: ,
+    //   role_id: ,
+    //   department_id ,
+    //   manager_id: ,
+
+    // },
     function (err, res) {
       if (err) throw err;
       genericFollowUpPrompt();
