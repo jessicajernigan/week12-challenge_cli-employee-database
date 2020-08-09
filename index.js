@@ -285,15 +285,15 @@ const addEmpFollowUpPrompt = (roles) => {
     .then((newEmp) => {
       const { firstName, lastName, role_name, manager } = newEmp
       // const newEmp = Object.create( firstName, lastName, role, manager )
-      console.log('Here is the new employee: ', newEmp);
-      console.log('Here is newEmp.role_name: ', newEmp.role_name);
+      // console.log('Here is the new employee: ', newEmp);
+      // console.log('Here is newEmp.role_name: ', newEmp.role_name);
       let roleName = role_name;
       let mgrName = manager;
-      console.log('roleName: ', roleName)
+      // console.log('roleName: ', roleName)
       return Promise.all([getRoleId(roleName), getMgrId(mgrName), newEmp])
     }).then((values) => {
-      console.log(values)
-      // addNewEmployee(newEmp) 
+      // console.log(values)
+      addNewEmployee(values) 
     });
 };
 
@@ -301,13 +301,13 @@ const addEmpFollowUpPrompt = (roles) => {
 // 2. A function to retrieve the role_id and department_id
 const getRoleId = (roleName) => {
   return new Promise((resolve, reject) => {
-    connection.query('SELECT id, department_id FROM roles WHERE ?',
+    connection.query('SELECT id AS role_id, department_id FROM roles WHERE ?',
       {
         role_name: roleName,
       },
       function (err, res) {
         if (err) reject(err);
-        console.log('Should show an id: ', res);
+        // console.log('res containing department_id and role_id: ', res);
         resolve(res);
       })
   })
@@ -317,7 +317,7 @@ const getRoleId = (roleName) => {
 const getMgrId = (mgrName) => {
   return new Promise((resolve, reject) => {
     const [first_name, last_name] = mgrName.split(' ');
-    const query = connection.query('SELECT id FROM managers WHERE ?',
+    const query = connection.query('SELECT id AS manager_id FROM managers WHERE ?',
       [
         {
           first_name: first_name,
@@ -327,16 +327,24 @@ const getMgrId = (mgrName) => {
         }],
       function (err, res) {
         if (err) reject(err);
-        console.log('Should show an id: ', res);
+        // console.log('Should show an id: ', res);
         resolve(res);
       })
-    console.log(query.sql);
+    // console.log(query.sql);
   })
 }
 
 
 // 4. A function to insert that value and return messaging to the user.
-const addNewEmployee = (newEmp) => {
+const addNewEmployee = (values) => {
+  // console.log('values array prior to reformatting: ', values);
+  const firstName = values[2].first_name
+  const lastName = values[2].last_name
+  const roleId = values[0][0].role_id
+  const departmentId = values[0][0].department_id 
+  const managerId = values[1][0].manager_id
+  console.log('first_name: ', firstName, 'last_name: ', lastName, 'role_id: ', roleId, '//// department_id: ', departmentId, '//// manager_id: ', managerId)
+
   console.log(
     `
    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = •  
@@ -348,14 +356,7 @@ const addNewEmployee = (newEmp) => {
   );
   const query = connection.query(
     'INSERT INTO employees SET ? AND SET ? AND SET ?',
-    // {
-    //   first_name: ,
-    //   last_name: ,
-    //   role_id: ,
-    //   department_id ,
-    //   manager_id: ,
 
-    // },
     function (err, res) {
       if (err) throw err;
       genericFollowUpPrompt();
