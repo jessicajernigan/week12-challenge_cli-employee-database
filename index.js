@@ -355,8 +355,14 @@ const addNewEmployee = (values) => {
   `
   );
   const query = connection.query(
-    'INSERT INTO employees SET ? AND SET ? AND SET ?',
-
+    'INSERT INTO employees SET ?',
+      {
+        first_name: firstName,
+        last_name: lastName,
+        role_id: roleId,
+        department_id: departmentId,
+        manager_id: managerId
+      },
     function (err, res) {
       if (err) throw err;
       genericFollowUpPrompt();

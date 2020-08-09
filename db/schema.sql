@@ -40,7 +40,7 @@ CREATE TABLE employees
 (
   id INTEGER AUTO_INCREMENT,
   first_name VARCHAR(30) NOT NULL,
-  last_name VARCHAR(50) NOT NULL,
+  last_name varchar(40) DEFAULT '' NOT NULL,
   role_id INTEGER UNSIGNED NOT NULL,
   department_id INTEGER NOT NULL,
   manager_id INTEGER UNSIGNED,
