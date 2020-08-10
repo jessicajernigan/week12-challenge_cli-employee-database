@@ -1,9 +1,6 @@
 const inquirer = require('inquirer'); // Call 'inquirer' package
 const cTable = require('console.table'); // Call 'console.table' package
 const { connection } = require("./db/connection");
-const rolesArray = []
-// var deasync = require('deasync');
-// const { viewRoles, viewEmployees, viewDepts } = require('./db/index.js');
 
 
 // "Main Menu" prompt
@@ -15,7 +12,6 @@ const employeeDbPrompt = () => {
   |                                                                         |
    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • 
   `);
-  // retrieveAllRoles();
 
   return inquirer.prompt([
     {
@@ -44,7 +40,7 @@ const employeeDbPrompt = () => {
         break;
       case "Add an Employee": addEmpFollowUpPrompt();
         break;
-      case "Update an Employee\'s Role": updateRole();
+      case "Update an Employee\'s Role": updateRoleFollowUpPrompt();
         break;
       default: exitProgramHandler();
     }
@@ -118,7 +114,7 @@ const viewRoles = () => {
     })
 };
 
-
+/// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • ///
 const viewEmployees = () => {
   console.log(`
    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • =
@@ -136,8 +132,7 @@ const viewEmployees = () => {
     r.role_name AS 'Job Title',
     r.salary AS Salary,
     d.dept_name AS Department,
-    m.first_name AS 'Manager First Name',
-    m.last_name AS 'Manager First Name'
+    CONCAT(m.first_name, ' ', m.last_name) AS Manager
   FROM 
     employees e
     JOIN roles r
@@ -149,12 +144,12 @@ const viewEmployees = () => {
 
     function (err, res) {
       if (err) throw err;
-      // Log all results of the SELECT statement
       console.table(res);
       genericFollowUpPrompt();
     });
 };
 
+/// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • ///
 const viewDepts = () => {
   console.log(`
    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • =  
@@ -164,7 +159,11 @@ const viewDepts = () => {
    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = 
   `);
 
-  connection.query('SELECT * FROM departments ORDER BY id ASC;', // Used quotes instead of backticks here due to simplicity of the query.
+  connection.query(`
+  SELECT 
+    id AS 'Department ID',
+    dept_name AS Department
+  FROM departments ORDER BY id ASC;`,
     function (err, res) {
       if (err) throw err;
       // Log all results of the SELECT statement
@@ -174,6 +173,7 @@ const viewDepts = () => {
 };
 
 
+/// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • ///
 // Adding a department occurs in two parts: 
 // 1. A function to prompt the user for the input.
 const addDeptFollowUpPrompt = () => {
@@ -215,18 +215,9 @@ const addNewDept = (newDeptString) => {
   );
 };
 
-
-
-// const retrieveAllRoles = () => {
-//     connection.query('SELECT role_name FROM roles',
-//       function (err, res) {
-//         if (err) throw err;
-//         rolesArray.push(res);
-//       });
-
-// };
-
-
+/// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • ///
+//  Adding a new employee occurs in multiple steps.
+// 1. A series of prompts to gather user input.
 const addEmpFollowUpPrompt = (roles) => {
   return inquirer.prompt([
     {
@@ -284,22 +275,17 @@ const addEmpFollowUpPrompt = (roles) => {
   ])
     .then((newEmp) => {
       const { firstName, lastName, role_name, manager } = newEmp
-      // const newEmp = Object.create( firstName, lastName, role, manager )
-      // console.log('Here is the new employee: ', newEmp);
-      // console.log('Here is newEmp.role_name: ', newEmp.role_name);
       let roleName = role_name;
       let mgrName = manager;
-      // console.log('roleName: ', roleName)
-      return Promise.all([getRoleId(roleName), getMgrId(mgrName), newEmp])
+      return Promise.all([getRoleDeptIds(roleName), getMgrId(mgrName), newEmp])
     }).then((values) => {
-      // console.log(values)
-      addNewEmployee(values) 
+      addNewEmployee(values)
     });
 };
 
 
 // 2. A function to retrieve the role_id and department_id
-const getRoleId = (roleName) => {
+const getRoleDeptIds = (roleName) => {
   return new Promise((resolve, reject) => {
     connection.query('SELECT id AS role_id, department_id FROM roles WHERE ?',
       {
@@ -341,9 +327,9 @@ const addNewEmployee = (values) => {
   const firstName = values[2].first_name
   const lastName = values[2].last_name
   const roleId = values[0][0].role_id
-  const departmentId = values[0][0].department_id 
+  const departmentId = values[0][0].department_id
   const managerId = values[1][0].manager_id
-  console.log('first_name: ', firstName, 'last_name: ', lastName, 'role_id: ', roleId, '//// department_id: ', departmentId, '//// manager_id: ', managerId)
+  // console.log('first_name: ', firstName, 'last_name: ', lastName, 'role_id: ', roleId, '//// department_id: ', departmentId, '//// manager_id: ', managerId)
 
   console.log(
     `
@@ -356,19 +342,156 @@ const addNewEmployee = (values) => {
   );
   const query = connection.query(
     'INSERT INTO employees SET ?',
-      {
-        first_name: firstName,
-        last_name: lastName,
-        role_id: roleId,
-        department_id: departmentId,
-        manager_id: managerId
-      },
+    {
+      first_name: firstName,
+      last_name: lastName,
+      role_id: roleId,
+      department_id: departmentId,
+      manager_id: managerId
+    },
     function (err, res) {
       if (err) throw err;
       genericFollowUpPrompt();
     }
   );
 };
+
+
+/// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • /// • ///
+// // //   U P D A T E   R O L E   // // // 
+const updateRoleFollowUpPrompt = () => {
+  return inquirer.prompt([
+    {
+      type: 'list',
+      name: 'employee',
+      message: 'Who\'s role would you like to update?',
+      choices: [
+        'Culla Holme',
+        'Rinthy Holme',
+        'Louis Toadvine',
+        'Grannyrat Chambers',
+        'The Kid',
+        'Ben Tobin',
+        'Marcus Webster',
+        'John Glanton',
+        'Doc Irving',
+        'Arthur Ownby',
+        'John Rattner',
+        'Llewelyn Moss',
+        'Carla Jean Moss',
+        'Fred Kirby',
+        'Fate urner',
+        'Lacey Rawlins',
+        'Jimmy Blevins',
+        'Boyd Parham',
+        'Mac McGovern'
+      ]
+    },
+    {
+      type: 'list',
+      name: 'role_name',
+      message: 'What new role would you like to assign to this employee?',
+      choices: [
+        'Inbound Salesperson',
+        'VP of Sales',
+        'Outbound Salesperson',
+        'Account Manager',
+        'Front End Developer',
+        'Back End Developer',
+        'Engineering Manager',
+        'VP of Product',
+        'Visual Designer',
+        'UX Designer',
+        'Affiliate Manager',
+        'Controller',
+        'Accountant',
+        'Content Strategist',
+        'SEO Manager',
+        'SEO Generalist',
+        'VP of Marketing',
+        'Marketing Analyst',
+        'Recruiter',
+        'HR Manager',
+        'Office Administrator'
+      ]
+    }
+  ])
+    .then((roleChange) => {
+      const { employee, role_name } = roleChange
+      let role = role_name;
+      let employeeFirstName = employee
+      return Promise.all([getRoleId(role), getEmployeeId(employeeFirstName)])
+    })
+    .then((updateValues) => {
+      // console.log(updateValues)
+      updateRole(updateValues)
+    });
+};
+
+
+const getEmployeeId = (employeeFirstName) => {
+  return new Promise((resolve, reject) => {
+    const [first_name, last_name] = employeeFirstName.split(' ');
+    const query = connection.query('SELECT id FROM employees WHERE ?',
+      [
+        {
+          first_name: first_name,
+        },
+        {
+          last_name: last_name
+        }],
+      function (err, res) {
+        if (err) reject(err);
+        resolve(res);
+      })
+  })
+}
+
+const getRoleId = (role) => {
+  return new Promise((resolve, reject) => {
+    connection.query('SELECT id AS role_id FROM roles WHERE ?',
+      {
+        role_name: role,
+      },
+      function (err, res) {
+        if (err) reject(err);
+        // console.log('res containing department_id and role_id: ', res);
+        resolve(res);
+      })
+  })
+}
+
+
+updateRole = (updateValues) => {
+  const roleId = updateValues[0][0].role_id
+  const id = updateValues[1][0].id
+
+  console.log(
+    `
+    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = •   
+   |                                                                                     |
+   |      T H I S   E M P L O Y E E ' S   R O L E   H A S   B E E N   U P D A T E D      |  
+   |                                                                                     |
+    • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = • = •
+   `
+  );
+  const query = connection.query(
+    'UPDATE employees SET ? WHERE ?',
+    [
+      {
+        role_id: roleId,
+      },
+      {
+        id: id,
+      },
+    ],
+    function (err, res) {
+      if (err) throw err;
+      genericFollowUpPrompt();
+    },
+  )
+};
+
 
 employeeDbPrompt();
 
