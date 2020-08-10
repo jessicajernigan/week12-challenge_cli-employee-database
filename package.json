@@ -4,10 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "mysql source db/schema.sql",
-    "seed": "mysql source db/seeds.sql",
-    "db": "sqlite3 db/employeeDB.db"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

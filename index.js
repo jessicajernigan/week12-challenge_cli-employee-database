@@ -101,7 +101,9 @@ const viewRoles = () => {
   SELECT 
   r.id AS 'Role ID', 
   r.role_name AS 'Role', 
-  d.dept_name AS 'Department'
+  d.dept_name AS 'Department',
+  CONCAT('$', r.salary) AS Salary
+
   FROM
     roles r JOIN departments d 
     ON r.department_id = d.id
