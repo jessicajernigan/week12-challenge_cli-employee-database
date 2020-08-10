@@ -1,10 +1,19 @@
 DROP DATABASE IF EXISTS employeeDB;
 CREATE DATABASE employeeDB;
 USE employeeDB;
+
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS managers;
 DROP TABLE IF EXISTS departments;
 DROP TABLE IF EXISTS roles;
+
+
+CREATE TABLE departments 
+(
+  id INTEGER AUTO_INCREMENT,
+  dept_name VARCHAR(80) NOT NULL,
+  PRIMARY KEY(id)
+);
 
 
 CREATE TABLE roles 
@@ -13,14 +22,6 @@ CREATE TABLE roles
   role_name VARCHAR(80) NOT NULL,
   salary DECIMAL(12,2),
   department_id INTEGER UNSIGNED NOT NULL,
-  PRIMARY KEY(id)
-);
-
-
-CREATE TABLE departments 
-(
-  id INTEGER AUTO_INCREMENT,
-  dept_name VARCHAR(80) NOT NULL,
   PRIMARY KEY(id)
 );
 
